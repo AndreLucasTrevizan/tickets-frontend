@@ -8,8 +8,8 @@ type State = {
 
 const useUserStore = create<State>((set) => ({
   users: [],
-  addUser: (user: UserType) => {
-    set(state => [...state, user]);
+  addUser: (user) => {
+    set(state => {...state, user});
   },
 }));
 
