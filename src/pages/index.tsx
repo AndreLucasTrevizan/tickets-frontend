@@ -1,23 +1,26 @@
 import Head from "next/head";
 import { useState } from "react";
 import useUserStore from "../stores/user";
+import { useAuthContext } from "../contexts/AuthContext";
+import { ErrorHandler } from "../services/errors/ErrorHandler";
 
 export default function Home() {
-  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
-  const addUser = useUserStore(state => state.addUser);
-  const users = useUserStore(state => state.users);
+  const { handleUserSignIn } = useAuthContext();
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    addUser({ name, email });
+    if (email === '' && password === '') return;
 
-    setName('');
-    setEmail('');
-  };
+    handleUserSignIn({ email, password });
   
+    setEmail('');
+    setPassword('');
+  };
+
   return (
     <>
       <Head>
@@ -26,13 +29,10 @@ export default function Home() {
 
       <div>
         <form onSubmit={onSubmit}>
-          <input type="text" value={name} onChange={(text) => setName(text.target.value)} />
-          <input type="text" value={email} onChange={(text) => setEmail(text.target.value)} />
-          <button type="submit">Create User</button>
+          <input type="email" value={email} onChange={(text) => setEmail(text.target.value)} />
+          <input type="password" value={password} onChange={(text) => setPassword(text.target.value)} />
+          <button type="submit">Sign In</button>
         </form>
-
-        {users.length === 0 && <h3>No users found yet</h3>}
-        {users?.map(user => <p key={Math.random()}>{user.name} | {user.email}</p>)}
       </div>
     </>
   );
